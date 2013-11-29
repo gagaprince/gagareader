@@ -1,0 +1,35 @@
+[{
+	"name":"搜索",
+	"className":"com.prince.gagareader.SearchActivity",
+	"param":""
+},
+{
+	"name":"今日推荐",
+	"className":"com.prince.gagareader.IndexActivity",
+	"param":""
+},
+{
+	"name":"热门分类",
+	"className":"com.prince.gagareader.CateListActivity",
+	"param":"1"
+},
+{
+	"name":"男生频道",
+	"className":"com.prince.gagareader.IndexActivity",
+	"param":""
+},
+{
+	"name":"女生频道",
+	"className":"com.prince.gagareader.IndexActivity",
+	"param":""
+},
+{
+	"name":"热门排行",
+	"className":"com.prince.gagareader.IndexActivity",
+	"param":""
+},
+{
+	"name":"传统文学",
+	"className":"com.prince.gagareader.CateListActivity",
+	"param":"2"
+}]
