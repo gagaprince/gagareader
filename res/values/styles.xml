@@ -1,0 +1,19 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+	<style name="inventory_view_list_style">
+        <item name="android:cacheColorHint">#ffffff</item>
+        <!-- 取消listview的上边和下边有黑色的阴影 -->
+        <item name="android:fadingEdge">none</item>
+        <!-- 取消默认会显示选中listview的item底色 -->
+        <item name="android:listSelector">#00000000</item>
+        <item name="android:scrollingCache">false</item>
+        <item name="android:scrollbars">none</item>
+    </style>
+	<style name="scroll_view_list_style">
+        <item name="android:cacheColorHint">#ffffff</item>
+        <!-- 取消listview的上边和下边有黑色的阴影 -->
+        <item name="android:fadingEdge">none</item>
+        <!-- 取消默认会显示选中listview的item底色 -->
+        <item name="android:listSelector">#00000000</item>
+        <item name="android:scrollingCache">false</item>
+    </style>
+</resources>

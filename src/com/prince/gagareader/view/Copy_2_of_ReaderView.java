@@ -30,7 +30,7 @@ import com.prince.gagareader.bean.PrepageBean;
 import com.prince.gagareader.bean.StringRulerBean;
 import com.prince.gagareader.util.SharedPreferencesUtil;
 
-public class ReaderView extends View{
+public class Copy_2_of_ReaderView extends View{
 	private Context context;
 	public boolean hasLoadData = false;
 	
@@ -85,11 +85,11 @@ public class ReaderView extends View{
 	
 	
 	
-	public ReaderView(Context context) {  
+	public Copy_2_of_ReaderView(Context context) {  
         super(context);  
     }
 	
-	public ReaderView(Context context, AttributeSet attrs) {
+	public Copy_2_of_ReaderView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
 		initBean();
@@ -97,7 +97,7 @@ public class ReaderView extends View{
 		initPreDrawListenner();
 	}
 	private void initBean(){
-		needLoadDataListenners = new ArrayList<ReaderView.NeedLoadDataListenner>();
+		needLoadDataListenners = new ArrayList<Copy_2_of_ReaderView.NeedLoadDataListenner>();
 		onLoadDataComplete = new OnLoadDataCompleteImpl();
 		SharedPreferencesUtil su = SharedPreferencesUtil.getInstance();
 		textSize = su.getContextFontSize(context);
@@ -114,7 +114,7 @@ public class ReaderView extends View{
 		su.setContextBg(bgindex, context);
 		int color = Color.BLACK;
 		if(bgindex==1){
-			color = Color.rgb(90, 90, 90);
+			color = Color.WHITE;
 			su.setContextLight(currentIndex, context);
 		}
 		textPaint.setColor(color);
@@ -137,11 +137,11 @@ public class ReaderView extends View{
 			despage--;
 		}
 		if(despage<currentBegin){
-			goPrePage(-viewWidth/2,despage);
+			goPrePage(-viewWidth,despage);
 		}else if(despage==currentBegin){
 			
 		}else{
-			goNextPage(-viewWidth/2, despage);
+			goNextPage(0, despage);
 		}
 	}
 	
@@ -164,7 +164,7 @@ public class ReaderView extends View{
 		SharedPreferencesUtil su = SharedPreferencesUtil.getInstance();
 		int color = Color.BLACK;
 		if(su.getContextBg(context)==1){
-			color = Color.rgb(90, 90, 90);
+			color = Color.WHITE;
 		}
 		textPaint = new Paint();
 		textPaint.setTextSize(textSize);
@@ -192,8 +192,8 @@ public class ReaderView extends View{
             public boolean onPreDraw(){
                 if (hasMeasured == false){  
                 	hasMeasured = true;
-                	viewWidth = ReaderView.this.getWidth();
-            		viewHeight = ReaderView.this.getHeight();
+                	viewWidth = Copy_2_of_ReaderView.this.getWidth();
+            		viewHeight = Copy_2_of_ReaderView.this.getHeight();
             		initBackPhoto();
             		excuteNeedReloadCurrent();
             		preparedTextBitmap(topCanvas, currentBegin);
@@ -239,7 +239,7 @@ public class ReaderView extends View{
      */
     private int getFontHeight() {
         FontMetrics fm = textPaint.getFontMetrics();
-        return (int)Math.ceil(fm.descent - fm.top) + 5;
+        return (int)Math.ceil(fm.descent - fm.top) + 2;
     }
 	
 	public void setTextData(String textData){
@@ -338,9 +338,9 @@ public class ReaderView extends View{
 			float upX = event.getX();
 			if(transFormDir==TRANSFORMINIT){//只是点击 没有手动滑动操作翻页
 				if(upX<viewWidth/3){
-					goPrePage(-viewWidth/2,-1);
+					goPrePage(-viewWidth,-1);
 				}else if(upX>viewWidth-viewWidth/3){
-					goNextPage(-viewWidth/2,-1);
+					goNextPage(0,-1);
 				}else{
 					// 点击屏幕中央
 					if(middleClickListenner!=null){

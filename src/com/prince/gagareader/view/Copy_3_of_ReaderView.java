@@ -30,7 +30,7 @@ import com.prince.gagareader.bean.PrepageBean;
 import com.prince.gagareader.bean.StringRulerBean;
 import com.prince.gagareader.util.SharedPreferencesUtil;
 
-public class ReaderView extends View{
+public class Copy_3_of_ReaderView extends View{
 	private Context context;
 	public boolean hasLoadData = false;
 	
@@ -82,14 +82,15 @@ public class ReaderView extends View{
 	private boolean drawing = false;
 	
 	private OnMiddleClick middleClickListenner;
+	private Thread drawThread;
 	
 	
 	
-	public ReaderView(Context context) {  
+	public Copy_3_of_ReaderView(Context context) {  
         super(context);  
     }
 	
-	public ReaderView(Context context, AttributeSet attrs) {
+	public Copy_3_of_ReaderView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
 		initBean();
@@ -97,7 +98,7 @@ public class ReaderView extends View{
 		initPreDrawListenner();
 	}
 	private void initBean(){
-		needLoadDataListenners = new ArrayList<ReaderView.NeedLoadDataListenner>();
+		needLoadDataListenners = new ArrayList<Copy_3_of_ReaderView.NeedLoadDataListenner>();
 		onLoadDataComplete = new OnLoadDataCompleteImpl();
 		SharedPreferencesUtil su = SharedPreferencesUtil.getInstance();
 		textSize = su.getContextFontSize(context);
@@ -114,7 +115,7 @@ public class ReaderView extends View{
 		su.setContextBg(bgindex, context);
 		int color = Color.BLACK;
 		if(bgindex==1){
-			color = Color.rgb(90, 90, 90);
+			color = Color.WHITE;
 			su.setContextLight(currentIndex, context);
 		}
 		textPaint.setColor(color);
@@ -137,11 +138,11 @@ public class ReaderView extends View{
 			despage--;
 		}
 		if(despage<currentBegin){
-			goPrePage(-viewWidth/2,despage);
+			goPrePage(-viewWidth,despage);
 		}else if(despage==currentBegin){
 			
 		}else{
-			goNextPage(-viewWidth/2, despage);
+			goNextPage(0, despage);
 		}
 	}
 	
@@ -164,7 +165,7 @@ public class ReaderView extends View{
 		SharedPreferencesUtil su = SharedPreferencesUtil.getInstance();
 		int color = Color.BLACK;
 		if(su.getContextBg(context)==1){
-			color = Color.rgb(90, 90, 90);
+			color = Color.WHITE;
 		}
 		textPaint = new Paint();
 		textPaint.setTextSize(textSize);
@@ -192,8 +193,8 @@ public class ReaderView extends View{
             public boolean onPreDraw(){
                 if (hasMeasured == false){  
                 	hasMeasured = true;
-                	viewWidth = ReaderView.this.getWidth();
-            		viewHeight = ReaderView.this.getHeight();
+                	viewWidth = Copy_3_of_ReaderView.this.getWidth();
+            		viewHeight = Copy_3_of_ReaderView.this.getHeight();
             		initBackPhoto();
             		excuteNeedReloadCurrent();
             		preparedTextBitmap(topCanvas, currentBegin);
@@ -210,6 +211,9 @@ public class ReaderView extends View{
     	   canvas.drawBitmap(realBitmap,null, new Rect(0, 0, viewWidth, viewHeight), textPaint);
        }
        if(drawing){
+    	   if(drawThread!=null){
+    		   drawThread.run();
+    	   }
     	   invalidate();
        }
     }
@@ -239,7 +243,7 @@ public class ReaderView extends View{
      */
     private int getFontHeight() {
         FontMetrics fm = textPaint.getFontMetrics();
-        return (int)Math.ceil(fm.descent - fm.top) + 5;
+        return (int)Math.ceil(fm.descent - fm.top) + 2;
     }
 	
 	public void setTextData(String textData){
@@ -338,9 +342,9 @@ public class ReaderView extends View{
 			float upX = event.getX();
 			if(transFormDir==TRANSFORMINIT){//只是点击 没有手动滑动操作翻页
 				if(upX<viewWidth/3){
-					goPrePage(-viewWidth/2,-1);
+					goPrePage(-viewWidth,-1);
 				}else if(upX>viewWidth-viewWidth/3){
-					goNextPage(-viewWidth/2,-1);
+					goNextPage(0,-1);
 				}else{
 					// 点击屏幕中央
 					if(middleClickListenner!=null){
@@ -381,39 +385,29 @@ public class ReaderView extends View{
 			preparedTextBitmap(bottomCanvas, currentBegin+1);
 		}
 		beginDraw();
-		new Thread(new Runnable() {
+		drawThread = new Thread(new Runnable() {
 			int left=leftx;
-			int v=15;
+			int v=25;
 			public void run() {
-				//left-=viewWidth/3;
-				if(left<=50-viewWidth){
+				left-=v;
+				v+=1;
+				if(left<=-viewWidth){
 					left=-viewWidth;
 				}
 				drawAllBitmap(left);
-				while(left>-viewWidth){
-					try {
-						Thread.sleep(1);
-					} catch (InterruptedException e) {
-						pageClock = false;
-						e.printStackTrace();
+				if(left<=-viewWidth){
+					if(despage!=-1){
+						currentBegin = despage;
+					}else{
+						currentBegin++;
 					}
-					left-=v;
-					v+=1;
-					if(left<=-viewWidth){
-						left=-viewWidth;
-					}
-					drawAllBitmap(left);
+					excuteNeedChangeBookMark();
+					pageClock = false;
+					stopDraw();
+					drawThread = null;
 				}
-				if(despage!=-1){
-					currentBegin = despage;
-				}else{
-					currentBegin++;
-				}
-				excuteNeedChangeBookMark();
-				pageClock = false;
-				stopDraw();
 			}
-		}).start();
+		});
 	}
 	
 	/**
@@ -433,39 +427,29 @@ public class ReaderView extends View{
 		}
 		preparedTextBitmap(bottomCanvas, currentBegin);
 		beginDraw();
-		new Thread(new Runnable() {
+		drawThread = new Thread(new Runnable() {
 			int left=leftx;
-			int v=15;
+			int v=25;
 			public void run() {
-				//left+=viewWidth/2;
+				left+=v;
+				v+=1;
 				if(left>=0){
 					left=0;
 				}
 				drawAllBitmap(left);
-				while(left<0){
-					try {
-						Thread.sleep(1);
-					} catch (InterruptedException e) {
-						pageClock = false;
-						e.printStackTrace();
+				if(left>=0){
+					if(despage!=-1){
+						currentBegin=despage;
+					}else{
+						currentBegin--;
 					}
-					left+=v;
-					v+=1;
-					if(left>=0){
-						left=0;
-					}
-					drawAllBitmap(left);
+					excuteNeedChangeBookMark();
+					pageClock = false;
+					stopDraw();
+					drawThread = null;
 				}
-				if(despage!=-1){
-					currentBegin=despage;
-				}else{
-					currentBegin--;
-				}
-				excuteNeedChangeBookMark();
-				pageClock = false;
-				stopDraw();
 			}
-		}).start();
+		});
 	}
 	
 	public void excuteNeedReloadCurrent(){
@@ -613,34 +597,23 @@ public class ReaderView extends View{
 			pageClock = true;
 			preparedTextBitmap(topCanvas, currentBegin);
 			beginDraw();
-			new Thread(new Runnable() {
+			drawThread = new Thread(new Runnable() {
 				int left=-viewWidth;
 				int v=15;
 				public void run() {
-					//left+=viewWidth/2;
+					left+=v;
+					v+=1;
 					if(left>=0){
 						left=0;
-						stopDraw();
 					}
 					drawAllBitmap(left);
-					while(left<0){
-						try {
-							Thread.sleep(1);
-						} catch (InterruptedException e) {
-							pageClock = false;
-							e.printStackTrace();
-						}
-						left+=v;
-						v+=1;
-						if(left>=0){
-							left=0;
-						}
-						drawAllBitmap(left);
+					if(left>=0){
+						pageClock = false;
+						stopDraw();
+						drawThread = null;
 					}
-					pageClock = false;
-					stopDraw();
 				}
-			}).start();
+			});
 		}
 		@Override
 		public void onError() {
@@ -656,34 +629,24 @@ public class ReaderView extends View{
 			pageClock = true;
 			preparedTextBitmap(bottomCanvas, currentBegin);
 			beginDraw();
-			new Thread(new Runnable() {
+			drawThread = null;
+			drawThread = new Thread(new Runnable() {
 				int left=0;
 				int v=15;
 				public void run() {
-					//left-=viewWidth/2;
+					left-=v;
+					v+=1;
 					if(left<=-viewWidth){
 						left=-viewWidth;
-						stopDraw();
 					}
 					drawAllBitmap(left);
-					while(left>-viewWidth){
-						try {
-							Thread.sleep(1);
-						} catch (InterruptedException e) {
-							pageClock = false;
-							e.printStackTrace();
-						}
-						left-=v;
-						v+=1;
-						if(left<=50-viewWidth){
-							left=-viewWidth;
-						}
-						drawAllBitmap(left);
+					if(left<=-viewWidth){
+						pageClock = false;
+						stopDraw();
+						drawThread = null;
 					}
-					pageClock = false;
-					stopDraw();
 				}
-			}).start();
+			});
 		}
 	}
 
@@ -741,34 +704,23 @@ public class ReaderView extends View{
 		pageClock = true;
 		preparedTextBitmap(bottomCanvas, currentBegin);
 		beginDraw();
-		new Thread(new Runnable() {
+		drawThread = new Thread(new Runnable() {
 			int left=0;
 			int v=15;
 			public void run() {
-				//left-=viewWidth/2;
+				left-=v;
+				v+=1;
 				if(left<=-viewWidth){
 					left=-viewWidth;
-					stopDraw();
 				}
 				drawAllBitmap(left);
-				while(left>-viewWidth){
-					try {
-						Thread.sleep(1);
-					} catch (InterruptedException e) {
-						pageClock = false;
-						e.printStackTrace();
-					}
-					left-=v;
-					v+=1;
-					if(left<=50-viewWidth){
-						left=-viewWidth;
-					}
-					drawAllBitmap(left);
+				if(left<=-viewWidth){
+					pageClock = false;
+					stopDraw();
+					drawThread = null;
 				}
-				pageClock = false;
-				stopDraw();
 			}
-		}).start();
+		});
 	}
 	
 	public interface OnMiddleClick{

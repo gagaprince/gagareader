@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="left|center_vertical"
+    android:paddingTop="10dip"
+    android:paddingBottom="10dip"
+    android:background="#ffffffff"
+    android:orientation="horizontal" >
+	<LinearLayout 
+	    android:layout_width="100dip"
+	    android:layout_height="fill_parent"
+	    android:gravity="center">
+	    <ImageView android:id="@+id/bookshow"
+	        android:layout_width="50dip"
+	        android:layout_height="wrap_content"
+	        android:src="@drawable/bg"
+	        />
+	</LinearLayout>
+	<LinearLayout 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:gravity="left"
+	    android:orientation="vertical"
+	    android:layout_weight="2">
+	    <LinearLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1">
+	        <TextView android:id="@+id/novel_name"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="title"
+	            android:textSize="16sp"
+	            android:textColor="#ff000000"/>
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1">
+	        <TextView android:id="@+id/novel_author"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="author"
+	            android:textSize="14sp"
+	            android:textColor="#ff000000"/>
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1">
+	        <TextView android:id="@+id/novel_des"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="描述"
+	            android:textSize="12sp"
+	            android:textColor="#ff000000"/>
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1">
+	        <TextView android:id="@+id/novel_lastChapter"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text=""
+	            android:textSize="12sp"
+	            android:textColor="#ff885d32"/>
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1">
+	        <TextView android:id="@+id/novel_site"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text=""
+	            android:textSize="12sp"
+	            android:textColor="#ff000000"/>
+	    </LinearLayout>
+	</LinearLayout>
+	<LinearLayout 
+	    android:layout_width="50dip"
+	    android:layout_height="wrap_content"
+	    android:gravity="center">
+	    <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/go"/>
+	</LinearLayout>
+</LinearLayout>

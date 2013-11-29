@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffffffff"
+    android:orientation="vertical" >
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_big" >
+        <Button
+            android:id="@+id/btn_leftTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dip"
+            android:textColor="#ffffff"
+            android:background="@drawable/back_right"
+            android:text="返回"/>
+        <TextView
+            android:id="@+id/tv_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:shadowColor="#ff000000"
+            android:shadowDx="2"
+            android:shadowDy="0"
+            android:shadowRadius="1"
+            android:text="随便看看"
+            android:textColor="#ffffff"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_rightTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dip"
+            android:textColor="#ffffff"
+            android:background="@drawable/back_right"
+            android:text="更多分类"
+            />
+    </RelativeLayout>
+    <LinearLayout 
+        android:id="@+id/bottom_linear" 
+        android:layout_alignParentBottom="true" 
+        android:layout_width="fill_parent" 
+        android:layout_height="50dip" 
+        android:gravity="center" 
+        android:visibility="visible">
+        <ProgressBar android:layout_width="24dip" 
+            android:layout_height="24dip" 
+            android:layout_marginLeft="20dip" />
+        <TextView android:layout_width="fill_parent"
+             android:layout_height="wrap_content" 
+             android:text="正在加载，请稍后。。。" 
+             android:textColor="#ff666666" 
+             android:textSize="20sp" 
+             android:gravity="center"/>
+    </LinearLayout>
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+		<ListView android:id="@+id/indexLv"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    style="@style/inventory_view_list_style"
+		    android:divider="#ffdfdfdf"
+		   	android:dividerHeight="1px"
+		    android:background="#ffffffff"
+		    >
+		</ListView>
+    </LinearLayout>
+</LinearLayout>

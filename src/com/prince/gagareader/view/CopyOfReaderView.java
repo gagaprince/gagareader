@@ -20,6 +20,7 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -30,11 +31,11 @@ import com.prince.gagareader.bean.PrepageBean;
 import com.prince.gagareader.bean.StringRulerBean;
 import com.prince.gagareader.util.SharedPreferencesUtil;
 
-public class ReaderView extends View{
+public class CopyOfReaderView extends View{
 	private Context context;
 	public boolean hasLoadData = false;
 	
-	private int[] imgs={R.drawable.spring,R.drawable.nightstyle,R.drawable.sky,R.drawable.fenhong,R.drawable.yellow,R.drawable.yanpi,R.drawable.huyan,R.drawable.jiushu};
+	private int[] imgs={R.drawable.huyan};
 	private Bitmap bgBitmap;
 	
 	private Bitmap topBitmap;	//翻页时上层图片
@@ -79,17 +80,13 @@ public class ReaderView extends View{
 	private float batterLevel=-1f;
 	private String chapterName;
 	
-	private boolean drawing = false;
+	private Ondrawing drawing;
 	
-	private OnMiddleClick middleClickListenner;
-	
-	
-	
-	public ReaderView(Context context) {  
+	public CopyOfReaderView(Context context) {  
         super(context);  
     }
 	
-	public ReaderView(Context context, AttributeSet attrs) {
+	public CopyOfReaderView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
 		initBean();
@@ -97,54 +94,12 @@ public class ReaderView extends View{
 		initPreDrawListenner();
 	}
 	private void initBean(){
-		needLoadDataListenners = new ArrayList<ReaderView.NeedLoadDataListenner>();
+		needLoadDataListenners = new ArrayList<CopyOfReaderView.NeedLoadDataListenner>();
 		onLoadDataComplete = new OnLoadDataCompleteImpl();
 		SharedPreferencesUtil su = SharedPreferencesUtil.getInstance();
 		textSize = su.getContextFontSize(context);
 		bgBitmap = BitmapFactory.decodeResource(this.getContext().getResources(), imgs[su.getContextBg(context)]);
 	}
-	/**
-	 * 更新背景
-	 * @param bgindex
-	 */
-	public void updateBg(int bgindex){
-		bgBitmap = BitmapFactory.decodeResource(this.getContext().getResources(), imgs[bgindex]);
-		SharedPreferencesUtil su = SharedPreferencesUtil.getInstance();
-		int currentIndex = su.getContextBg(context);
-		su.setContextBg(bgindex, context);
-		int color = Color.BLACK;
-		if(bgindex==1){
-			color = Color.rgb(90, 90, 90);
-			su.setContextLight(currentIndex, context);
-		}
-		textPaint.setColor(color);
-		batterPaint.setColor(color);
-		titlePaint.setColor(color);
-		preparedTextBitmap(topCanvas, currentBegin);
-		drawAllBitmap(0);
-		postInvalidate();
-	}
-	
-	public int getJindu(){
-		return currentBegin+1;
-	}
-	public int getAllPage(){
-		int allPageSize = currentChapter.getPages().size();
-		return allPageSize;
-	}
-	public void setJindu(int despage){
-		if(despage==getAllPage()){
-			despage--;
-		}
-		if(despage<currentBegin){
-			goPrePage(-viewWidth/2,despage);
-		}else if(despage==currentBegin){
-			
-		}else{
-			goNextPage(-viewWidth/2, despage);
-		}
-	}
-	
 	private void initBackPhoto(){
 		//bgBitmap = BitmapFactory.decodeResource(this.getContext().getResources(), R.drawable.y1);
 		topBitmap = Bitmap.createBitmap(viewWidth, viewHeight, Config.ARGB_8888);//创建屏幕大小的缓冲区
@@ -161,27 +116,22 @@ public class ReaderView extends View{
 	 * 初始化画笔
 	 */
 	private void initTextPaint(){
-		SharedPreferencesUtil su = SharedPreferencesUtil.getInstance();
-		int color = Color.BLACK;
-		if(su.getContextBg(context)==1){
-			color = Color.rgb(90, 90, 90);
-		}
 		textPaint = new Paint();
 		textPaint.setTextSize(textSize);
 		textPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
 		textPaint.setTextAlign(Align.LEFT);
 		textPaint.setTypeface(Typeface.DEFAULT_BOLD);
-		textPaint.setColor(color);
+		textPaint.setColor(Color.BLACK);
 		
 		batterPaint = new Paint();
 		batterPaint.setTextSize(12);
-		batterPaint.setColor(color);
+		batterPaint.setColor(Color.BLACK);
 		
 		titlePaint = new Paint();
 		titlePaint.setTextSize(16);
 		titlePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
 		titlePaint.setTextAlign(Align.LEFT);
-		titlePaint.setColor(color);
+		titlePaint.setColor(Color.BLACK);
 	}
 	/**
 	 * 初始化view 宽高等参数
@@ -192,8 +142,8 @@ public class ReaderView extends View{
             public boolean onPreDraw(){
                 if (hasMeasured == false){  
                 	hasMeasured = true;
-                	viewWidth = ReaderView.this.getWidth();
-            		viewHeight = ReaderView.this.getHeight();
+                	viewWidth = CopyOfReaderView.this.getWidth();
+            		viewHeight = CopyOfReaderView.this.getHeight();
             		initBackPhoto();
             		excuteNeedReloadCurrent();
             		preparedTextBitmap(topCanvas, currentBegin);
@@ -206,10 +156,14 @@ public class ReaderView extends View{
 	@Override
     protected void onDraw(Canvas canvas) {
        super.onDraw(canvas);
+       boolean goingdraw = false;
+       if(this.drawing!=null){
+    	   goingdraw = this.drawing.preparedDraw();
+       }
        synchronized (realBitmap) {
     	   canvas.drawBitmap(realBitmap,null, new Rect(0, 0, viewWidth, viewHeight), textPaint);
        }
-       if(drawing){
+       if(goingdraw){
     	   invalidate();
        }
     }
@@ -239,7 +193,7 @@ public class ReaderView extends View{
      */
     private int getFontHeight() {
         FontMetrics fm = textPaint.getFontMetrics();
-        return (int)Math.ceil(fm.descent - fm.top) + 5;
+        return (int)Math.ceil(fm.descent - fm.top) + 2;
     }
 	
 	public void setTextData(String textData){
@@ -263,13 +217,6 @@ public class ReaderView extends View{
 		currentChapter = new ChapterBean(textData, viewWidth-marginLeft-marginRight, viewHeight-marginTop-marginBottom, textSize, getFontHeight(), textPaint);
 	}
 	
-	private void beginDraw(){
-		drawing=true;
-		postInvalidate();
-	}
-	private void stopDraw(){
-		drawing = false;
-	}
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -279,7 +226,6 @@ public class ReaderView extends View{
 			touchStartX = event.getX();
 			touchStartY = event.getY();
 			touchMoveClock = false;//解锁
-			beginDraw();
 			return true;
 		case MotionEvent.ACTION_MOVE:
 			if(touchStartX==-1||touchStartY==-1){
@@ -291,6 +237,7 @@ public class ReaderView extends View{
 			}
 			float nowX = event.getX();
 			float moveX = nowX-touchStartX;
+			Log.e("movex", ""+moveX);
 			if(transFormDir==TRANSFORMINIT){
 				if(moveX>10){
 					if(currentBegin==0){
@@ -329,33 +276,27 @@ public class ReaderView extends View{
 			}
 			return true;
 		case MotionEvent.ACTION_UP:
-			if(!pageClock){
-				stopDraw();
-			}
 			if(touchMoveClock){
 				return false;
 			}
 			float upX = event.getX();
 			if(transFormDir==TRANSFORMINIT){//只是点击 没有手动滑动操作翻页
 				if(upX<viewWidth/3){
-					goPrePage(-viewWidth/2,-1);
+					goPrePage(-viewWidth);
 				}else if(upX>viewWidth-viewWidth/3){
-					goNextPage(-viewWidth/2,-1);
+					goNextPage(0);
 				}else{
 					// 点击屏幕中央
-					if(middleClickListenner!=null){
-						middleClickListenner.onClick();
-					}
 				}
 			}else{//由滑动操作就从此时坐标继续滑动操作
 				float upMoveX = upX-touchStartX;
 				if(transFormDir==TRANSFORMLEFT){
 					if(upMoveX<0){
-						goNextPage((int)upMoveX,-1);
+						goNextPage((int)upMoveX);
 					}
 				}else{
 					if(upMoveX>0){
-						goPrePage((int)upMoveX-viewWidth,-1);
+						goPrePage((int)upMoveX-viewWidth);
 					}
 				}
 				transFormDir = TRANSFORMINIT;
@@ -367,7 +308,7 @@ public class ReaderView extends View{
 	/**
 	 * 下翻页
 	 */
-	private void goNextPage(final int leftx,final int despage){
+	private void goNextPage(final int leftx){
 		if(pageClock)return;
 		if(currentBegin == currentChapter.getPages().size()-1){
 			excuteNeedNext();
@@ -375,67 +316,112 @@ public class ReaderView extends View{
 		}
 		pageClock = true; //加锁
 		preparedTextBitmap(topCanvas, currentBegin);
-		if(despage!=-1){
-			preparedTextBitmap(bottomCanvas, despage);
-		}else{
-			preparedTextBitmap(bottomCanvas, currentBegin+1);
-		}
-		beginDraw();
-		new Thread(new Runnable() {
+		preparedTextBitmap(bottomCanvas, currentBegin+1);
+		
+		this.drawing = new Ondrawing() {
 			int left=leftx;
-			int v=15;
-			public void run() {
-				//left-=viewWidth/3;
+			int v=30;
+			@Override
+			public boolean preparedDraw() {
+				left-=viewWidth/3;
 				if(left<=50-viewWidth){
 					left=-viewWidth;
 				}
 				drawAllBitmap(left);
 				while(left>-viewWidth){
 					try {
-						Thread.sleep(1);
+						Thread.sleep(15);
 					} catch (InterruptedException e) {
 						pageClock = false;
 						e.printStackTrace();
 					}
 					left-=v;
-					v+=1;
-					if(left<=-viewWidth){
+					//v+=1;
+					if(left<=50-viewWidth){
 						left=-viewWidth;
 					}
 					drawAllBitmap(left);
 				}
-				if(despage!=-1){
-					currentBegin = despage;
-				}else{
-					currentBegin++;
-				}
+				currentBegin++;
 				excuteNeedChangeBookMark();
 				pageClock = false;
-				stopDraw();
+				return false;
 			}
-		}).start();
+		};
+		/*new Thread(new Runnable() {
+			int left=leftx;
+			int v=30;
+			public void run() {
+				left-=viewWidth/3;
+				if(left<=50-viewWidth){
+					left=-viewWidth;
+				}
+				drawAllBitmap(left);
+				while(left>-viewWidth){
+					try {
+						Thread.sleep(15);
+					} catch (InterruptedException e) {
+						pageClock = false;
+						e.printStackTrace();
+					}
+					left-=v;
+					//v+=1;
+					if(left<=50-viewWidth){
+						left=-viewWidth;
+					}
+					drawAllBitmap(left);
+				}
+				currentBegin++;
+				excuteNeedChangeBookMark();
+				pageClock = false;
+			}
+		}).start();*/
+	}
+	
+	class NextDrawing implements Ondrawing{
+		int left=0;
+		int v=30;
+		public NextDrawing(int leftx){
+			left = leftx;
+			left-=viewWidth/3;
+			if(left<=50-viewWidth){
+				left=-viewWidth;
+			}
+			drawAllBitmap(left);
+			postInvalidate();
+		}
+		@Override
+		public boolean preparedDraw() {
+			left-=v;
+			//v+=1;
+			if(left<=50-viewWidth){
+				left=-viewWidth;
+			}
+			drawAllBitmap(left);
+			if(left>-viewWidth){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
 	}
 	
 	/**
 	 * 上翻页
 	 */
-	private void goPrePage(final int leftx,final int despage){
+	private void goPrePage(final int leftx){
 		if(pageClock)return;
 		if(currentBegin ==0){
 			excuteNeedPre();
 			return;
 		}
 		pageClock = true; //加锁
-		if(despage!=-1){
-			preparedTextBitmap(topCanvas, despage);
-		}else{
-			preparedTextBitmap(topCanvas, currentBegin-1);
-		}
+		preparedTextBitmap(topCanvas, currentBegin-1);
 		preparedTextBitmap(bottomCanvas, currentBegin);
-		beginDraw();
 		new Thread(new Runnable() {
 			int left=leftx;
-			int v=15;
+			int v=30;
 			public void run() {
 				//left+=viewWidth/2;
 				if(left>=0){
@@ -444,26 +430,22 @@ public class ReaderView extends View{
 				drawAllBitmap(left);
 				while(left<0){
 					try {
-						Thread.sleep(1);
+						Thread.sleep(15);
 					} catch (InterruptedException e) {
 						pageClock = false;
 						e.printStackTrace();
 					}
 					left+=v;
-					v+=1;
+					v+=5;
+					if(left>-50)left=0;
 					if(left>=0){
 						left=0;
 					}
 					drawAllBitmap(left);
 				}
-				if(despage!=-1){
-					currentBegin=despage;
-				}else{
-					currentBegin--;
-				}
+				currentBegin--;
 				excuteNeedChangeBookMark();
 				pageClock = false;
-				stopDraw();
 			}
 		}).start();
 	}
@@ -610,35 +592,31 @@ public class ReaderView extends View{
 			loadDataClock = false;
 			currentBegin = currentChapter.getPages().size()-1;
 			excuteNeedChangeBookMark();
-			pageClock = true;
 			preparedTextBitmap(topCanvas, currentBegin);
-			beginDraw();
 			new Thread(new Runnable() {
 				int left=-viewWidth;
-				int v=15;
+				int v=30;
 				public void run() {
 					//left+=viewWidth/2;
-					if(left>=0){
+					if(left>=-50){
 						left=0;
-						stopDraw();
 					}
 					drawAllBitmap(left);
 					while(left<0){
 						try {
-							Thread.sleep(1);
+							Thread.sleep(15);
 						} catch (InterruptedException e) {
 							pageClock = false;
 							e.printStackTrace();
 						}
 						left+=v;
-						v+=1;
-						if(left>=0){
+						v+=5;
+						if(left>=-50){
 							left=0;
 						}
 						drawAllBitmap(left);
 					}
 					pageClock = false;
-					stopDraw();
 				}
 			}).start();
 		}
@@ -653,35 +631,31 @@ public class ReaderView extends View{
 		private void goNext(){
 			reload();
 			loadDataClock = false;
-			pageClock = true;
 			preparedTextBitmap(bottomCanvas, currentBegin);
-			beginDraw();
 			new Thread(new Runnable() {
 				int left=0;
-				int v=15;
+				int v=30;
 				public void run() {
 					//left-=viewWidth/2;
-					if(left<=-viewWidth){
+					if(left<=50-viewWidth){
 						left=-viewWidth;
-						stopDraw();
 					}
 					drawAllBitmap(left);
 					while(left>-viewWidth){
 						try {
-							Thread.sleep(1);
+							Thread.sleep(15);
 						} catch (InterruptedException e) {
 							pageClock = false;
 							e.printStackTrace();
 						}
 						left-=v;
-						v+=1;
+						v+=5;
 						if(left<=50-viewWidth){
 							left=-viewWidth;
 						}
 						drawAllBitmap(left);
 					}
 					pageClock = false;
-					stopDraw();
 				}
 			}).start();
 		}
@@ -726,55 +700,9 @@ public class ReaderView extends View{
         }; 
         IntentFilter batteryLevelFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED); 
         context.registerReceiver(batteryLevelReceiver, batteryLevelFilter); 
-    }
+    } 
 	
-	public void resizeFontSize(int fontsize){
-		textSize = fontsize;
-		textPaint.setTextSize(textSize);
-		int allpageCount = getAllPage();
-		int currentPage = currentBegin;
-		reload();
-		int nowAllpageCount = getAllPage();
-		currentBegin = currentPage*nowAllpageCount/allpageCount;
-		loadDataClock = false;
-		excuteNeedChangeBookMark();
-		pageClock = true;
-		preparedTextBitmap(bottomCanvas, currentBegin);
-		beginDraw();
-		new Thread(new Runnable() {
-			int left=0;
-			int v=15;
-			public void run() {
-				//left-=viewWidth/2;
-				if(left<=-viewWidth){
-					left=-viewWidth;
-					stopDraw();
-				}
-				drawAllBitmap(left);
-				while(left>-viewWidth){
-					try {
-						Thread.sleep(1);
-					} catch (InterruptedException e) {
-						pageClock = false;
-						e.printStackTrace();
-					}
-					left-=v;
-					v+=1;
-					if(left<=50-viewWidth){
-						left=-viewWidth;
-					}
-					drawAllBitmap(left);
-				}
-				pageClock = false;
-				stopDraw();
-			}
-		}).start();
-	}
-	
-	public interface OnMiddleClick{
-		public void onClick();
-	}
-	public void setOnMiddleClick(OnMiddleClick middleClickListenner){
-		this.middleClickListenner = middleClickListenner;
+	interface Ondrawing{
+		public boolean preparedDraw();
 	}
 }

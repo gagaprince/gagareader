@@ -137,7 +137,7 @@ public class FileUtil {
 		return bitmap;
 	}
 	
-	public void saveUrlContentToFile(String url,String filePath){
+	public void saveUrlContentToFile(String url,String filePath) throws IOException{
 		if(url==null||!url.startsWith("http:"))return;
 		checkFileExist(filePath);
 		File saveFile = new File(filePath);
@@ -161,6 +161,7 @@ public class FileUtil {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw e;
 		}finally{
 			if(conn!=null){
 				conn.disconnect();
@@ -316,4 +317,14 @@ public class FileUtil {
         }
     }
 
+	public void deleteFile(File f){
+		if(f.isDirectory()){
+			File[] fs = f.listFiles();
+			for(File ft:fs){
+				deleteFile(ft);
+			}
+		}else{
+			f.delete();
+		}
+	}
 }
