@@ -200,23 +200,40 @@ public class DateProvider {
 				MuluBean muluBean = new MuluBean(nidstr, cid, title);
 				muluBeanList.add(muluBean);
 			}
-			/*if(updateFlag&&getFromNet){
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							fu.saveUrlContentToFile(muluUrl, filePath);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}).start();
-			}*/
 			return muluBeanList;
 		}else{
 			return null;
 		}
 	}
+	
+	public List<CateBean> getAllTagBeanList(String url,String param) throws IOException, JSONException{
+		FileUtil fu = FileUtil.getInstance();
+		String cateBeanListResult = fu.getUrlContent(url);
+		List<CateBean> cateBeanList = new ArrayList<CateBean>();
+		JSONObject cateBean = new JSONObject(cateBeanListResult);
+		JSONArray cateItems = cateBean.getJSONArray("items");
+		int length = cateItems.length();
+		JSONObject cateTagItem=null;
+		for(int i=0;i<length;i++){
+			JSONObject cateItem = cateItems.getJSONObject(i);
+			String tagname = cateItem.getString("tagName");
+			if(param.equals(tagname)){
+				cateTagItem = cateItem;
+			}
+		}
+		if(cateTagItem==null){
+			return null;
+		}
+		JSONArray cateArray = cateTagItem.getJSONArray("items");
+		length = cateArray.length();
+		for(int i=0;i<length;i++){
+			String tagCate = cateArray.getString(i);
+			CateBean cateBeanTemp = new CateBean(tagCate);
+			cateBeanList.add(cateBeanTemp);
+		}
+		return cateBeanList;
+	}
+	
 	/**
 	 * 获取所有分类
 	 * @param url
@@ -253,9 +270,11 @@ public class DateProvider {
 	public List<BookBean> getCateListJson(String cate,int pno,int cateType) throws IOException, JSONException{
 		String bdUrl = "";
 		if(cateType==0){
-			bdUrl = Const.NOVEL_BD_CATE+"&tit="+URLEncoder.encode(cate)+"&pno="+pno;
+			bdUrl = Const.NOVEL_BD_CATE+"&cate="+URLEncoder.encode(cate)+"&pno="+pno;
+		}else if(cateType==1){
+			bdUrl = Const.NOVEL_TBD_CATE+"&cate="+URLEncoder.encode(cate)+"&pno="+pno;
 		}else{
-			bdUrl = Const.NOVEL_TBD_CATE+"&tit="+URLEncoder.encode(cate)+"&pno="+pno;
+			bdUrl = Const.NOVEL_TAG_CATE+"&cate="+URLEncoder.encode(cate)+"&pno="+pno;
 		}
 		FileUtil fu = FileUtil.getInstance();
 		String bdResult = fu.getUrlContent(bdUrl);
@@ -266,10 +285,10 @@ public class DateProvider {
 		int length = bdArray.length();
 		for(int i=0;i<length;i++){
 			JSONObject oneBook = bdArray.getJSONObject(i);
-			String author = oneBook.getString("author");
-			String imgurl = oneBook.getString("imgUrl");
-			String resource_type = oneBook.getString("resource_type");
-			String novelName = oneBook.getString("resource_name");
+			String author = oneBook.has("author")?oneBook.getString("author"):"未知";
+			String imgurl = oneBook.has("imgUrl")?oneBook.getString("imgUrl"):"";
+			String resource_type = oneBook.has("resource_type")?oneBook.getString("resource_type"):"暂无分类";
+			String novelName = oneBook.has("resource_name")?oneBook.getString("resource_name"):"暂无名字";
 			if("".equals(imgurl)){
 				imgurl = "http://tbook.yicha.cn/timg.html?name="+URLEncoder.encode(novelName)+"&author="+URLEncoder.encode(author)+"&type="+URLEncoder.encode(resource_type);
 			}

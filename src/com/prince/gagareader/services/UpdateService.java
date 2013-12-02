@@ -69,7 +69,7 @@ public class UpdateService extends Service{
 		long lastUpdate = su.getLastUpdateTime(this);
 		long nowTime = now.getTime();
 		long timeDistance = nowTime-lastUpdate;
-		if(timeDistance>21600000&&!"none".equals(getNetWorkCate())){
+		if(timeDistance>3600000&&!"none".equals(getNetWorkCate())){
 			checkBookUpdate();
 			su.addUpdateTime(nowTime, this);
 		}

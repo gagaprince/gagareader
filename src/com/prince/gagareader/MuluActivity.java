@@ -86,17 +86,17 @@ public class MuluActivity extends Activity{
 			@Override
 			public void run() {
 				String netState = getNetWorkCate();
+				boolean flag = false;
 				if(!"none".equals(netState)){
-					try {
-						muluBeanList = DateProvider.getInstance().getMuluBeanListByNid(nid, true);
-						sendMessage(1);
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}else{
-					
+					flag = true;
+				}
+				try {
+					muluBeanList = DateProvider.getInstance().getMuluBeanListByNid(nid, flag);
+					sendMessage(1);
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
 			}
 		}).start();
