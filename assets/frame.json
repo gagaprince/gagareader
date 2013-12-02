@@ -15,13 +15,13 @@
 },
 {
 	"name":"男生频道",
-	"className":"com.prince.gagareader.IndexActivity",
-	"param":""
+	"className":"com.prince.gagareader.BoyGirlActivity",
+	"param":"男生标签"
 },
 {
 	"name":"女生频道",
-	"className":"com.prince.gagareader.IndexActivity",
-	"param":""
+	"className":"com.prince.gagareader.BoyGirlActivity",
+	"param":"女生标签"
 },
 {
 	"name":"热门排行",
