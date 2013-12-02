@@ -13,6 +13,5 @@
 	    android:textSize="16sp"
 	    android:background="@drawable/catebutton"
 	    android:padding="5dp"
-	    android:layout_margin="10dp"
 	    android:textColor="#ff744c24"/>
 </LinearLayout>
