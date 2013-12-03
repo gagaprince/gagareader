@@ -103,6 +103,12 @@ public class ReaderView extends View{
 		textSize = su.getContextFontSize(context);
 		bgBitmap = BitmapFactory.decodeResource(this.getContext().getResources(), imgs[su.getContextBg(context)]);
 	}
+	private void initTextSize(){
+		if(textSize==-1){
+			textSize = viewWidth/20;
+			initTextPaint();
+		}
+	}
 	/**
 	 * ¸üÐÂ±³¾°
 	 * @param bgindex
@@ -194,6 +200,7 @@ public class ReaderView extends View{
                 	hasMeasured = true;
                 	viewWidth = ReaderView.this.getWidth();
             		viewHeight = ReaderView.this.getHeight();
+            		initTextSize();
             		initBackPhoto();
             		excuteNeedReloadCurrent();
             		preparedTextBitmap(topCanvas, currentBegin);

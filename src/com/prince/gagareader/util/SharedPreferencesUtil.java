@@ -73,7 +73,7 @@ public class SharedPreferencesUtil {
 	
 	public int getContextFontSize(Context c){
 		String fontSize = getString(FONT_SIZE_KEY, c);
-		if("".equals(fontSize))return 24;
+		if("".equals(fontSize))return -1;
 		return Integer.parseInt(fontSize);
 	}
 	
