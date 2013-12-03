@@ -97,7 +97,7 @@ public class CateListActivity extends Activity{
 		backButton = (Button)findViewById(R.id.btn_leftTop);
 		cateListView = (ListView)findViewById(R.id.cateLv);
 		headTv = (TextView)findViewById(R.id.tv_head);
-		headTv.setText("热门分类");
+		headTv.setText("1".equals(param)?"热门分类":"传统文学");
 	}
 	private void addListenner(){
 		cateListView.setAdapter(cateAdapter);

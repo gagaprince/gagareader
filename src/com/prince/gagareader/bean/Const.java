@@ -11,6 +11,7 @@ public class Const {
 	public static String NOVEL_BD_CATE="http://tbook.yicha.cn/tb/subdfl_face.y?type=n&psize=20";
 	public static String NOVEL_TBD_CATE="http://tbook.yicha.cn/tb/subdfl_face.y?type=c&psize=20";
 	public static String NOVEL_TAG_CATE="http://tbook.yicha.cn/tb/flbq.y?psize=20";
+	public static String NOVEL_PHB_CATE="http://tbook.yicha.cn/tb/fyb.y?psize=20";
 	public static String NOVEL_TINGSHU_URL="http://tbook.yicha.cn/tb/ting.y?name=%E8%83%9C%E8%80%85%E4%B8%BA%E7%8E%8B&author=%E6%9E%97%E6%B5%B7%E5%90%AC%E6%B6%9B";
 	public static String NOVEL_BD_URL="http://60.28.215.124/cmsface/novel/recommend?id=boy,girl,bout,new,hot,cbout&b=0,0,0,0,0,0&e=14,14,14,14,14,14";
 	public static String NOVEL_HOT_URL="http://tbook.yicha.cn/searchhotwords1.html?pno=0&psize=30&init=0";

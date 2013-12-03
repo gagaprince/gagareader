@@ -14,6 +14,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.util.EncodingUtils;
 
@@ -84,6 +86,21 @@ public class FileUtil {
             e.printStackTrace();  
         }
         return res;
+	}
+	
+	public List<String> getAssetFileContentList(Context context,String fileName){
+		List<String> strList=new ArrayList<String>();
+		try {  
+            InputStream in = context.getResources().getAssets().open(fileName);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String str = null;
+            while((str=br.readLine())!=null){
+            	strList.add(str);
+            }
+        } catch (IOException e) {  
+            e.printStackTrace();  
+        }
+        return strList;
 	}
 	
 	public String getUrlContent(String url) throws IOException{

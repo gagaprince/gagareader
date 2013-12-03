@@ -1,10 +1,7 @@
 package com.prince.gagareader;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.json.JSONException;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -92,23 +89,17 @@ public class PhbActivity extends Activity{
 						CateActivity.class);
 				String cate = cateBean.getCate();
 				intent.putExtra("cate",cate);
-				intent.putExtra("cateType", 2);
+				intent.putExtra("cateType", 3);
             	startActivity(intent);
 			}
 		});
 	}
 	
 	private void loadMore(){
-		try {
-			List<CateBean> cateBeanListMore = DateProvider.getInstance().getAllTagBeanList(cateUrl,param);
-			if(cateBeanListMore!=null&&cateBeanListMore.size()>0){
-				cateBeanList=cateBeanListMore;
-				sendMsgBean(null, null, 2);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
+		List<CateBean> cateBeanListMore = DateProvider.getInstance().getAllPhbBeanList(PhbActivity.this);
+		if(cateBeanListMore!=null&&cateBeanListMore.size()>0){
+			cateBeanList=cateBeanListMore;
+			sendMsgBean(null, null, 2);
 		}
 	}
 	

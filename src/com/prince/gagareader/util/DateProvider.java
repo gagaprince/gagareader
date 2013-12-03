@@ -10,6 +10,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.prince.gagareader.bean.BookBean;
 import com.prince.gagareader.bean.CateBean;
 import com.prince.gagareader.bean.Const;
@@ -205,7 +208,24 @@ public class DateProvider {
 			return null;
 		}
 	}
-	
+	public List<CateBean> getAllPhbBeanList(Context context){
+		FileUtil fu = FileUtil.getInstance();
+		List<String> phbKeyList = fu.getAssetFileContentList(context,"phb.key");
+		List<CateBean> cateBeanList = new ArrayList<CateBean>();
+		int size = phbKeyList.size();
+		for(int i=0;i<size;i++){
+			cateBeanList.add(new CateBean(phbKeyList.get(i)));
+		}
+		return cateBeanList;
+	}
+	/**
+	 * 获取标签
+	 * @param url
+	 * @param param
+	 * @return
+	 * @throws IOException
+	 * @throws JSONException
+	 */
 	public List<CateBean> getAllTagBeanList(String url,String param) throws IOException, JSONException{
 		FileUtil fu = FileUtil.getInstance();
 		String cateBeanListResult = fu.getUrlContent(url);
@@ -273,8 +293,10 @@ public class DateProvider {
 			bdUrl = Const.NOVEL_BD_CATE+"&cate="+URLEncoder.encode(cate)+"&pno="+pno;
 		}else if(cateType==1){
 			bdUrl = Const.NOVEL_TBD_CATE+"&cate="+URLEncoder.encode(cate)+"&pno="+pno;
-		}else{
+		}else if(cateType==2){
 			bdUrl = Const.NOVEL_TAG_CATE+"&cate="+URLEncoder.encode(cate)+"&pno="+pno;
+		}else{
+			return getCateListFromPhb(cate,pno,cateType);
 		}
 		FileUtil fu = FileUtil.getInstance();
 		String bdResult = fu.getUrlContent(bdUrl);
@@ -297,7 +319,38 @@ public class DateProvider {
 		}
 		return bookBeanList;
 	}
-	
+	/**
+	 * 获取风云榜数据
+	 * @param cate
+	 * @param pno
+	 * @param cateType
+	 * @return
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public List<BookBean> getCateListFromPhb(String cate,int pno,int cateType) throws IOException, JSONException{
+		String bdUrl = Const.NOVEL_PHB_CATE+"&cate="+URLEncoder.encode(cate)+"&pno="+pno;
+		FileUtil fu = FileUtil.getInstance();
+		String bdResult = fu.getUrlContent(bdUrl);
+		List<BookBean> bookBeanList=new ArrayList<BookBean>();
+		if(bdResult.equals("[\"no result\"]"))return bookBeanList;
+		JSONObject bdObj = new JSONObject(bdResult);
+		JSONArray bdArray = bdObj.getJSONArray("records");
+		int length = bdArray.length();
+		for(int i=0;i<length;i++){
+			JSONObject oneBook = bdArray.getJSONObject(i);
+			String author = oneBook.has("author")?oneBook.getString("author"):"未知";
+			String imgurl = oneBook.has("img")?oneBook.getString("img"):"";
+			String resource_type = oneBook.has("type")?oneBook.getString("type"):"暂无分类";
+			String novelName = oneBook.has("name")?oneBook.getString("name"):"暂无名字";
+			if("".equals(imgurl)){
+				imgurl = "http://tbook.yicha.cn/timg.html?name="+URLEncoder.encode(novelName)+"&author="+URLEncoder.encode(author)+"&type="+URLEncoder.encode(resource_type);
+			}
+			BookBean bookBean = new BookBean(imgurl, novelName, author, resource_type,1);
+			bookBeanList.add(bookBean);
+		}
+		return bookBeanList;
+	}
 	public List<BookBean> getResultJson(String key,int pno) throws IOException, JSONException{
 		String searchUrl = Const.NOVEL_SEARCH_URL+"key="+URLEncoder.encode(key)+"&pno="+pno;
 		FileUtil fu = FileUtil.getInstance();

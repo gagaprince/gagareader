@@ -45,7 +45,7 @@ public class CateActivity extends Activity implements OnScrollListener{
 	
 	private List<BookBean> cateBeanList;
 	private String cate;
-	private int cateType; //0网络 1传统 2标签
+	private int cateType; //0网络 1传统 2标签3排行榜
 	private CateAdapter cateAdapter;
 	
 	private int lastVisibleIndex;
