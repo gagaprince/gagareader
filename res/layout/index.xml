@@ -15,6 +15,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dip"
+            android:padding="5dip"
             android:textColor="#ffffff"
             android:background="@drawable/back_right"
             android:text="返回"/>
@@ -40,6 +41,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="10dip"
             android:textColor="#ffffff"
+            android:padding="5dip"
             android:background="@drawable/back_right"
             android:text="更多分类"
             />

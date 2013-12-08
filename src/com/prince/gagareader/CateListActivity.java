@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -28,6 +29,7 @@ import com.prince.gagareader.bean.Const;
 import com.prince.gagareader.util.DateProvider;
 import com.prince.gagareader.util.ImageUtil;
 import com.prince.gagareader.util.ImageUtil.OnPreparedImageListenner;
+import com.umeng.analytics.MobclickAgent;
 
 public class CateListActivity extends Activity{
 	private Handler handler;
@@ -114,6 +116,12 @@ public class CateListActivity extends Activity{
 					intent.putExtra("cateType",1);
 				}
             	startActivity(intent);
+			}
+		});
+		backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				CateListActivity.this.finish();
 			}
 		});
 	}
@@ -206,5 +214,13 @@ public class CateListActivity extends Activity{
 		public void setBitmap(Drawable bitmap) {
 			this.bitmap = bitmap;
 		}
+	}
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 }

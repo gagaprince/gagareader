@@ -1,8 +1,8 @@
 package com.prince.gagareader.bean;
 
 public class Const {
-	public static String APP_PHOTO_CACHE;
-	public static String APP_TEXT_CACHE;
+	public static String APP_PHOTO_CACHE=null;
+	public static String APP_TEXT_CACHE=null;
 	
 	public final static String NOVEL_INFO_URL="http://tbook.yicha.cn/tb/infos.y?nid=";
 	public final static String NOVEL_INDEX_URL="http://tbook.yicha.cn/tb/chap.y?orderby=asc";

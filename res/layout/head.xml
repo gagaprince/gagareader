@@ -12,8 +12,10 @@
             android:layout_alignParentTop="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dip"
+            android:padding="5dip"
+            android:text="菜单"
             android:textColor="#ffffff"
-            android:background="@drawable/bn_left" />
+            android:background="@drawable/back_right" />
 
         <TextView
             android:id="@+id/tv_head"
@@ -36,8 +38,9 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dip"
+            android:padding="5dip"
             android:textColor="#ffffff"
             android:background="@drawable/back_right"
-            android:text="编辑"
+            android:text="推荐"
             />
     </RelativeLayout>

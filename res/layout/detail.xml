@@ -16,6 +16,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dip"
             android:textColor="#ffffff"
+            android:padding="5dip"
             android:background="@drawable/back_right"
             android:text="返回"/>
         <TextView
@@ -141,12 +142,12 @@
 				        android:id="@+id/online_read"
 				        android:layout_width="wrap_content"
 				        android:layout_height="wrap_content"
-				        android:background="@drawable/back_right"
+				        android:background="@drawable/catebutton"
 				        android:paddingLeft="5dip"
 				        android:paddingRight="5dip"
 				        android:paddingTop="15dip"
 				        android:paddingBottom="15dip"
-				        android:textSize="16sp"
+				        android:textSize="14sp"
 				        android:text="在线阅读"/>
 				</LinearLayout>
 			    
@@ -158,12 +159,12 @@
 				        android:id="@+id/index_btn"
 				        android:layout_width="wrap_content"
 				        android:layout_height="wrap_content"
-				        android:background="@drawable/back_right"
+				        android:background="@drawable/catebutton"
 				        android:paddingLeft="5dip"
 				        android:paddingRight="5dip"
 				        android:paddingTop="15dip"
 				        android:paddingBottom="15dip"
-				        android:textSize="16sp"
+				        android:textSize="14sp"
 				        android:text="目录"/>
 				</LinearLayout>
 				<LinearLayout android:layout_width="wrap_content"
@@ -174,12 +175,12 @@
 				        android:id="@+id/download_btn"
 				        android:layout_width="wrap_content"
 				        android:layout_height="wrap_content"
-				        android:background="@drawable/back_right"
+				        android:background="@drawable/catebutton"
 				        android:paddingLeft="5dip"
 				        android:paddingRight="5dip"
 				        android:paddingTop="15dip"
 				        android:paddingBottom="15dip"
-				        android:textSize="16sp"
+				        android:textSize="14sp"
 				        android:text="全本下载"/>
 				</LinearLayout>
 				<LinearLayout android:layout_width="wrap_content"
@@ -190,12 +191,12 @@
 				        android:id="@+id/put_shelf_btn"
 				        android:layout_width="wrap_content"
 				        android:layout_height="wrap_content"
-				        android:background="@drawable/back_right"
+				        android:background="@drawable/catebutton"
 				        android:paddingTop="15dip"
 				        android:paddingBottom="15dip"
 				        android:paddingLeft="5dip"
 				        android:paddingRight="5dip"
-				        android:textSize="16sp"
+				        android:textSize="14sp"
 				        android:text="加入书架"/>
 				</LinearLayout>
 			</LinearLayout>

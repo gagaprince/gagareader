@@ -16,6 +16,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dip"
             android:textColor="#ffffff"
+            android:padding="5dip"
             android:background="@drawable/back_right"
             android:text="返回"/>
         <TextView

@@ -15,9 +15,9 @@ import android.net.NetworkInfo.State;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -34,6 +34,7 @@ import com.prince.gagareader.bean.BookBean;
 import com.prince.gagareader.util.DateProvider;
 import com.prince.gagareader.util.ImageUtil;
 import com.prince.gagareader.util.ImageUtil.OnPreparedImageListenner;
+import com.umeng.analytics.MobclickAgent;
 
 public class CateActivity extends Activity implements OnScrollListener{
 	private Handler handler;
@@ -122,7 +123,12 @@ public class CateActivity extends Activity implements OnScrollListener{
 			}
 		});
 		cateListView.setOnScrollListener(this);
-		
+		backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				CateActivity.this.finish();
+			}
+		});
 	}
 	
 	class CateAdapter extends BaseAdapter{
@@ -245,5 +251,13 @@ public class CateActivity extends Activity implements OnScrollListener{
 			sendMsgBean(null, null, 3);
 		}
 		loadMoreLock = false;
+	}
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 }

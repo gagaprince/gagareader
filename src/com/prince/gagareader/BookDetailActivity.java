@@ -23,6 +23,7 @@ import com.prince.gagareader.util.DateProvider;
 import com.prince.gagareader.util.ImageUtil;
 import com.prince.gagareader.util.ImageUtil.OnPreparedImageListenner;
 import com.prince.gagareader.util.SharedPreferencesUtil;
+import com.umeng.analytics.MobclickAgent;
 
 public class BookDetailActivity extends Activity{
 	private Handler handler;
@@ -40,6 +41,7 @@ public class BookDetailActivity extends Activity{
 	private Button indexbtn;
 	private Button downLoadbtn;
 	private Button putShelfbtn;
+	private Button backButton;
 	private TextView description;
 	private TextView novel_lastnew;
 	@Override
@@ -117,6 +119,7 @@ public class BookDetailActivity extends Activity{
 		novel_state = (TextView)findViewById(R.id.novel_state);
 		description = (TextView)findViewById(R.id.des);
 		novel_lastnew = (TextView)findViewById(R.id.novel_lastnew);
+		backButton = (Button)findViewById(R.id.btn_leftTop);
 	}
 	private void addListenner(){
 		putShelfbtn.setOnClickListener(new OnClickListener() {
@@ -182,6 +185,12 @@ public class BookDetailActivity extends Activity{
             	startActivity(intent);
 			}
 		});
+		backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				BookDetailActivity.this.finish();
+			}
+		});
 	}
 	private void sendMsgBean(int msgWhat){
 		Message message = new Message();  
@@ -193,5 +202,13 @@ public class BookDetailActivity extends Activity{
         message.what = msgWhat;
         message.obj=bitmap;
         handler.sendMessage(message);
+	}
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 }

@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.prince.gagareader.bean.Const;
 import com.prince.gagareader.util.FileUtil;
+import com.umeng.analytics.MobclickAgent;
 
 public class GagaReaderBegin extends Activity{
 	private Handler handler ;
@@ -112,4 +113,13 @@ public class GagaReaderBegin extends Activity{
             return "wifi";
         return "none";
 	}
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
+	}
+
 }

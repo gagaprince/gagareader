@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -39,6 +40,7 @@ import android.widget.TextView;
 
 import com.prince.gagareader.bean.BookBean;
 import com.prince.gagareader.bean.BookShelfBean;
+import com.prince.gagareader.bean.Const;
 import com.prince.gagareader.bean.TabHostMsgBean;
 import com.prince.gagareader.services.DownLoadService;
 import com.prince.gagareader.util.FileUtil;
@@ -46,12 +48,15 @@ import com.prince.gagareader.util.ImageUtil;
 import com.prince.gagareader.util.ImageUtil.OnPreparedImageListenner;
 import com.prince.gagareader.util.NovelUtil;
 import com.prince.gagareader.util.SharedPreferencesUtil;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.update.UmengUpdateAgent;
 
 public class GagaReaderActivity extends ActivityGroup {
 	private ListView sj_listView;
 	private List<BookShelfBean> bookshelfBeanList;
 	private Handler handler;
 	private Button menuButton;
+	private Button tjButton;
 	private LinearLayout menuLayout;
     private LinearLayout appLayout;
     private ListView menuLv;
@@ -70,15 +75,22 @@ public class GagaReaderActivity extends ActivityGroup {
         initHandler();
         initData();
         initView();
+        UmengUpdateAgent.update(this);
     }
     private void initData(){
     	try {
+    		initConst();
     		initBookshelf();
 			initTabHostList();
 			initMenuNameList();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+    }
+    private void initConst(){
+    	if(Const.APP_PHOTO_CACHE==null){
+    		mkAppDirs();
+    	}
     }
     private void initBookshelf(){
     	bookshelfBeanList = new ArrayList<BookShelfBean>();
@@ -143,6 +155,16 @@ public class GagaReaderActivity extends ActivityGroup {
 			@Override
 			public void onClick(View v) {
 				changeMenuState();
+			}
+		});
+    	
+    	tjButton = (Button)findViewById(R.id.btn_rightTop);
+    	tjButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(GagaReaderActivity.this, IndexActivity.class);
+				intent.putExtra("param","");
+				startActivity(intent);
 			}
 		});
     	
@@ -521,5 +543,28 @@ public class GagaReaderActivity extends ActivityGroup {
 		    sliderOut=!sliderOut;
 		}
         super.onResume();
-    }   
+        MobclickAgent.onResume(this);
+    }
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
+	}
+	private boolean mkAppDirs(){
+		FileUtil fileUtil = FileUtil.getInstance();
+		Log.e("mkAppDirs", ""+fileUtil.isHaveSize());
+		if(fileUtil.isHaveSize()){//有剩余空间 就建立文件夹
+			String rootPath = Environment.getExternalStorageDirectory().getPath();
+			String appRootPath = rootPath+"/gagaReader";
+			Const.APP_PHOTO_CACHE= appRootPath+"/photocache";
+			Const.APP_TEXT_CACHE= appRootPath+"/textcache";
+			
+			fileUtil.mkdir(appRootPath);
+			fileUtil.mkdir(Const.APP_PHOTO_CACHE);
+			fileUtil.mkdir(Const.APP_TEXT_CACHE);
+		}else{						//没有剩余空间  设置状态为 直接从网络播放 不缓存
+			// 显示dialog  提示没有sd卡 不能使用
+			return false;
+		}
+		return true;
+	}
 }

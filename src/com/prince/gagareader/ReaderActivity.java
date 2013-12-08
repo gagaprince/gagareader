@@ -37,6 +37,7 @@ import com.prince.gagareader.view.ReaderView;
 import com.prince.gagareader.view.ReaderView.NeedLoadDataListenner;
 import com.prince.gagareader.view.ReaderView.OnMiddleClick;
 import com.prince.gagareader.view.ReaderView.OnloadDataComplete;
+import com.umeng.analytics.MobclickAgent;
 
 import dalvik.system.TemporaryDirectory;
 
@@ -591,4 +592,13 @@ public class ReaderActivity extends Activity {
         }
         return statusBarHeight;   
     }
+    
+    public void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
+	}
 }

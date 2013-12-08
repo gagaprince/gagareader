@@ -15,16 +15,19 @@ import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import com.prince.gagareader.bean.CateBean;
 import com.prince.gagareader.bean.Const;
 import com.prince.gagareader.util.DateProvider;
+import com.umeng.analytics.MobclickAgent;
 
 public class BoyGirlActivity extends Activity{
 	private Handler handler;
@@ -34,6 +37,7 @@ public class BoyGirlActivity extends Activity{
 	private String param;
 	private CateAdapter cateAdapter;
 	private TextView tv_head;
+	private Button backButton;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +83,7 @@ public class BoyGirlActivity extends Activity{
 		cateGridView = (GridView)findViewById(R.id.myGridView);
 		tv_head = (TextView)findViewById(R.id.tv_head);
 		tv_head.setText(param);
+		backButton=(Button)findViewById(R.id.btn_leftTop);
 	}
 	private void addListenner(){
 		Log.e("addListenner",cateGridView+"");
@@ -94,6 +99,12 @@ public class BoyGirlActivity extends Activity{
 				intent.putExtra("cate",cate);
 				intent.putExtra("cateType", 2);
             	startActivity(intent);
+			}
+		});
+		backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				BoyGirlActivity.this.finish();
 			}
 		});
 	}
@@ -169,5 +180,13 @@ public class BoyGirlActivity extends Activity{
 		public void setBitmap(Drawable bitmap) {
 			this.bitmap = bitmap;
 		}
+	}
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 }

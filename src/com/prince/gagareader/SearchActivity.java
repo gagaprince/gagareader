@@ -34,6 +34,7 @@ import com.prince.gagareader.bean.HotwordBean;
 import com.prince.gagareader.util.DateProvider;
 import com.prince.gagareader.util.ImageUtil;
 import com.prince.gagareader.util.ImageUtil.OnPreparedImageListenner;
+import com.umeng.analytics.MobclickAgent;
 
 public class SearchActivity extends Activity{
 private Handler handler;
@@ -191,6 +192,12 @@ private Handler handler;
 						}).start();
 					}
 				}
+			}
+		});
+		backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				SearchActivity.this.finish();
 			}
 		});
 		hotwordListView.setAdapter(hotAdapter);
@@ -375,5 +382,13 @@ private Handler handler;
 			});
 			return convertView;
 		}
+	}
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 }

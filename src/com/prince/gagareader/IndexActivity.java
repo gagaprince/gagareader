@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -31,13 +32,15 @@ import com.prince.gagareader.bean.ShowItemBean;
 import com.prince.gagareader.util.DateProvider;
 import com.prince.gagareader.util.ImageUtil;
 import com.prince.gagareader.util.ImageUtil.OnPreparedImageListenner;
+import com.umeng.analytics.MobclickAgent;
 
 public class IndexActivity extends Activity{
 	private Handler handler;
 	private ListView indexLv;
 	private LinearLayout bottomLinear;
 	private IndexLvAdapter indexLvAdapter;
-	
+	private Button backButton;
+	private Button moreCateButton;
 	private List<ShowItemBean> itemDateList;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,9 +103,25 @@ public class IndexActivity extends Activity{
     	indexLv = (ListView)findViewById(R.id.indexLv);
     	bottomLinear = (LinearLayout)findViewById(R.id.bottom_linear);
     	indexLvAdapter = new IndexLvAdapter();
+    	backButton = (Button)findViewById(R.id.btn_leftTop);
+    	moreCateButton = (Button)findViewById(R.id.btn_rightTop);
     }
     private void addListenner(){
     	indexLv.setAdapter(indexLvAdapter);
+    	backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				IndexActivity.this.finish();
+			}
+		});
+    	moreCateButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(IndexActivity.this, CateListActivity.class);
+				intent.putExtra("param","1");
+				startActivity(intent);
+			}
+		});
     }
     
     class IndexLvAdapter extends BaseAdapter{
@@ -316,5 +335,14 @@ public class IndexActivity extends Activity{
         if(wifi==State.CONNECTED||wifi==State.CONNECTING)
             return "wifi";
         return "none";
+	}
+    
+    public void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 }

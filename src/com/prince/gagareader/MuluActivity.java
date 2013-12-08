@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 
 import com.prince.gagareader.bean.MuluBean;
 import com.prince.gagareader.util.DateProvider;
+import com.umeng.analytics.MobclickAgent;
 
 public class MuluActivity extends Activity{
 	private Handler handler;
@@ -133,6 +135,12 @@ public class MuluActivity extends Activity{
             	}
 			}
 		});
+		backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				MuluActivity.this.finish();
+			}
+		});
 	}
 	class MuluAdapter extends BaseAdapter{
 		private int selectIndex=0;
@@ -186,5 +194,14 @@ public class MuluActivity extends Activity{
 		Message message = new Message();  
         message.what = msgwhat;
         handler.sendMessage(message);
+	}
+	
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 }
